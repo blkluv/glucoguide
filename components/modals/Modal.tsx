@@ -7,6 +7,7 @@ import { motion } from "framer-motion"
 import { fadingAnimation } from "@/lib/animations"
 import Icon from "../icons"
 import Button from "../buttons/Button"
+import { useKeyPress } from "@/hooks/useKeyPress"
 
 type Props = {
   open: boolean
@@ -31,7 +32,10 @@ export default function PopupModal({
 }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null)
 
+  // handle click outside of the modal
   useClickOutside(modalRef, () => handler && handler())
+  // handle exit on escape button press on keyboard
+  useKeyPress("Escape", () => handler && handler())
 
   return (
     <AnimatePresence>
@@ -77,13 +81,13 @@ export default function PopupModal({
                 <h3 className="font-bold mt-1 text-gray-800">{title}</h3>
                 <button
                   type="button"
-                  className={`flex mt-1 justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 dark:hover:bg-neutral-700 disabled:opacity-50 disabled:pointer-events-none`}
+                  className={`flex mt-1 justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-300/80 dark:hover:bg-neutral-700 disabled:opacity-50 disabled:pointer-events-none`}
                   onClick={() => handler && handler()}
                 >
                   <span className="sr-only">Close</span>
                   <Icon
                     name="cross"
-                    className="size-4"
+                    className="size-4 tl-[0.5px] -ml-[0.5px]"
                     pathClassName="dark:stroke-neutral-300"
                   />
                 </button>

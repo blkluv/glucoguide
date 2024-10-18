@@ -12,7 +12,7 @@ type Props = {
   appointmentsTomorrow: TYPEAPPOINTMENT[]
 }
 
-const demoFields = [
+const tableFields = [
   "serial",
   "time",
   "status",
@@ -59,7 +59,7 @@ export default function RecentAppointments({
         <table className="table-auto min-w-full divide-y divide-gray-200">
           <thead className="bg-zinc-200/50 dark:bg-neutral-500/50">
             <tr>
-              {demoFields.map((field, idx) => (
+              {tableFields.map((field, idx) => (
                 <th
                   key={`recent-key${idx}`}
                   scope="col"
@@ -104,12 +104,23 @@ export default function RecentAppointments({
 
                 {/* doctor */}
                 <td className="p-2 text-sm font-medium text-gray-800 dark:text-neutral-300 min-w-32 max-w-36">
-                  {item.doctor.name}
+                  <div>
+                    <Link
+                      href={`/hospitals/doctors/profile?id=${item.doctor.id}&type=view`}
+                    >
+                      {item.doctor.name}
+                    </Link>
+                  </div>
                 </td>
 
+                {/* hospital details */}
                 <td className="p-2 text-sm font-medium text-gray-800 dark:text-neutral-300 min-w-36">
                   <div>
-                    <Link href={"/"}>{item.hospital.name}</Link>
+                    <Link
+                      href={`hospitals/${item.hospital.id}/details?type=view`}
+                    >
+                      {item.hospital.name}
+                    </Link>
                     <p className="text-xs font-semibold opacity-80">
                       {item.hospital.address}
                     </p>

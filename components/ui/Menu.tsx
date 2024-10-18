@@ -26,7 +26,7 @@ export default function Menu() {
         animate="animate"
         exit="exit"
         ref={containerRef}
-        className="bg-[--primary-white] dark:bg-zinc-900 fixed z-50 min-h-full h-full w-60 top-0 left-0 pt-6 flex flex-col prevent-scroll md:hidden"
+        className="bg-[--primary-white] dark:bg-zinc-900 fixed z-[70] min-h-full h-full w-60 top-0 left-0 pt-6 flex flex-col prevent-scroll md:hidden"
       >
         {/* logo */}
         <div className="center gap-2 mb-8">
@@ -93,7 +93,7 @@ export default function Menu() {
 
       {/* overlay */}
       <motion.div
-        className="min-h-full min-w-full bg-black/60 contrast-75 dark:bg-black/50 dark:contrast-70 fixed z-40 top-0 right-0 bottom-0 left-0 md:hidden"
+        className="min-h-full min-w-full bg-black/60 contrast-75 dark:bg-black/50 dark:contrast-70 fixed z-50 top-0 right-0 bottom-0 left-0 md:hidden"
         variants={fadingAnimation}
         initial="initial"
         animate="animate"

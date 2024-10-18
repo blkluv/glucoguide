@@ -105,3 +105,7 @@ export { default as DateHeading } from "./dates/DateHeading"
 export { default as HumanAnatomy } from "./monitoring/HumanAnatomy"
 export { default as MonitoringSlider } from "./monitoring/MonitoringSlider"
 export { default as HealthMonitoring } from "./ui/patients/monitoring/HealthMonitoring"
+
+// tasks
+export { default as Tasks } from "./tasks/Tasks"
+export { default as Activities } from "./tasks/Activities"

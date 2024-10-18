@@ -93,14 +93,14 @@ export default function UpcomingAppointmentComponent({
           </h4>
         ) : (
           <Link
-            className="text-sm md:text-base font-bold opacity-95 hover:opacity-100 hover:text-blue-800 size-fit"
+            className="text-sm md:text-base font-bold opacity-95 hover:opacity-100 dark:hover:text-white/80 size-fit"
             href={`/hospitals/doctors/profile?id=${appointment.doctor.id}&type=view`}
           >
             {appointment.doctor.name}
           </Link>
         )}
         <Link
-          className="text-xs md:text-sm font-semibold leading-4 md:leading-4 size-fit opacity-95 hover:opacity-100 hover:text-blue-800"
+          className="text-xs md:text-sm font-semibold leading-4 md:leading-4 size-fit opacity-95 hover:opacity-100 dark:hover:text-white/80"
           href={`/hospitals/${appointment.hospital.id}/details?type=view`}
         >
           {appointment.hospital.name}

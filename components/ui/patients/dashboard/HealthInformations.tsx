@@ -79,7 +79,11 @@ export default function HealthInformations() {
       </div>
 
       {/* BMI */}
-      <div className="bg-[--primary-white] dark:bg-neutral-700 rounded-lg h-full">
+      <div className="relative bg-[--primary-white] dark:bg-neutral-700 rounded-lg h-full flex flex-col">
+        <div className="absolute hidden lg:block left-3/4 top-1/2 -translate-x-3/4 -translate-y-1/2 mix-blend-luminosity dark:mix-blend-overlay brightness-150 dark:brightness-150">
+          <Icon name="gluco-guide" className="size-28" />
+        </div>
+
         <div className="flex justify-between  py-2 px-1 md:p-3 border-b-2 border-b-[#f0f0f0] dark:border-neutral-500">
           <div className="flex items-center ml-1 3xl:ml-3">
             <Icon name="weight-machine" className="w-5 h-5" />
@@ -92,11 +96,13 @@ export default function HealthInformations() {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row p-4 mt-4 md:mt-6 justify-end">
-          <h3 className="text-4xl font-bold">22.3</h3>
-          <span className="self-end ml-3 text-[#355A38] font-bold text-xs xs:text-sm bg-[#B6D87F] px-3 xs:px-4 mt-2 md:mt-0 mb-1 py-1 rounded-md">
-            Normal
-          </span>
+        <div className="mt-auto">
+          <div className="flex flex-col md:flex-row p-4 md:mt-6 justify-end">
+            <h3 className="text-4xl font-bold">22.3</h3>
+            <span className="self-end ml-3 text-[#355A38] font-bold text-xs xs:text-sm bg-[#B6D87F] px-3 xs:px-4 mt-2 md:mt-0 mb-1 py-1 rounded-md">
+              Normal
+            </span>
+          </div>
         </div>
       </div>
     </div>

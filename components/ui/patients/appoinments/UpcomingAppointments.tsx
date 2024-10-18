@@ -2,9 +2,9 @@
 
 import { AppoinmentDetailsModal, Appointment } from "@/components"
 import { TYPEAPPOINTMENT } from "@/lib/dummy/appointments"
-import { firey } from "@/utils"
-import { format, isSameDay, startOfToday, startOfTomorrow } from "date-fns"
-import React, { useState } from "react"
+import { format, startOfToday, startOfTomorrow } from "date-fns"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import React, { useEffect, useState } from "react"
 
 type Props = {
   appointmentsToday: TYPEAPPOINTMENT[]
@@ -18,6 +18,13 @@ export default function UpcomingAppointments({
   appointmentsToday,
   appointmentsTomorrow,
 }: Props) {
+  const params = useSearchParams()
+  const pathaname = usePathname()
+  const router = useRouter()
+
+  const popup = !!params.get("popup")
+  const id = params.get("id")
+
   const [selected, setSelected] = useState<string | null>(null)
   const [openDetailsModal, setOpenDetailsModal] = useState<boolean>(false)
 
@@ -34,14 +41,22 @@ export default function UpcomingAppointments({
   function closeDetailsModal() {
     setSelected(null)
     setOpenDetailsModal(false)
+    if (!popup) return
+    router.replace(pathaname)
   }
 
   if (upcomingAppointments.length === 0) return <div />
 
+  useEffect(() => {
+    if (!popup && !!id) return
+    setSelected(id)
+    setOpenDetailsModal(true)
+  }, [popup])
+
   return (
     <React.Fragment>
       <div
-        className={`bg-slate-200/50 dark:bg-neutral-700 p-4 pb-5 rounded-lg overflow-hidden ${
+        className={`bg-slate-200/50 dark:bg-neutral-700 p-4 pb-7 rounded-lg overflow-hidden ${
           upcomingAppointments.length > 0 && `mb-4`
         }`}
       >

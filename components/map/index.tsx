@@ -19,14 +19,14 @@ type Props = {
 
 export default function Map({
   hospitals,
-  coordinates,
+  coordinates = [90.391, 23.752],
   className,
   zoom = 12.5,
   disableResetBtn = false,
 }: Props) {
   const [viewState, setViewState] = useState({
-    latitude: coordinates ? coordinates[1] : 23.752,
-    longitude: coordinates ? coordinates[0] : 90.391,
+    latitude: coordinates[1],
+    longitude: coordinates[0],
     zoom: zoom,
   })
 
@@ -38,7 +38,7 @@ export default function Map({
   )
 
   function handleReset() {
-    if (!mapRef.current || !coordinates) return
+    if (!mapRef.current) return
     mapRef.current.flyTo({
       center: [coordinates[0], coordinates[1]],
       zoom: 12.5,

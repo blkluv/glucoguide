@@ -6,7 +6,7 @@ import { HumanAnatomy, MonitoringSlider } from "@/components"
 type Props = {}
 
 export default function HealthMonitoring({}: Props) {
-  const [activeIndex, setActiveIndex] = useState<number>(4)
+  const [activeIndex, setActiveIndex] = useState<number>(-1)
 
   const handleOpenHandler = (idx: number) => {
     setActiveIndex(idx)

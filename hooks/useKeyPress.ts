@@ -1,34 +1,18 @@
 import { useEffect } from "react"
 
-interface UseKeyPressType {
-  key: string
-  onKeyPressed: () => void
-  onKeyReleased?: () => void
-}
-
-export function useKeyPress({
-  key,
-  onKeyPressed,
-  onKeyReleased,
-}: UseKeyPressType) {
+export function useKeyPress(key: string, handler: () => void) {
   useEffect(() => {
-    function keyDownHandler(e: globalThis.KeyboardEvent) {
+    function keyUpHandler(e: globalThis.KeyboardEvent) {
       if (e.key === key) {
         e.preventDefault()
-        onKeyPressed()
+        handler && handler()
       }
     }
 
-    function keyUpHandler() {
-      onKeyReleased && onKeyReleased()
-    }
-
-    document.addEventListener("keydown", keyDownHandler)
     document.addEventListener("keyup", keyUpHandler)
 
     return () => {
-      document.removeEventListener("keydown", keyDownHandler)
       document.removeEventListener("keyup", keyUpHandler)
     }
-  }, [])
+  }, [key, handler])
 }
