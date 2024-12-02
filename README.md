@@ -57,66 +57,6 @@ This project is a full-stack web application built with:
 └── compose.yaml         # Multi-container orchestration
 ```
 
-## 👻 **API Endpoints**
-
-| Endpoints                                      | Method | Description                                     |    Params     | Auth |  Role   |
-| :--------------------------------------------- | :----: | :---------------------------------------------- | :-----------: | :--: | :-----: |
-| api/v1/auth/login                              |  POST  | Login with credentials                          |     None      |  No  | General |
-| api/v1/auth/signup                             |  POST  | Signup with credentials                         |     None      |  No  | General |
-| api/v1/auth/google                             |  GET   | Google redirect URL                             |    Custom     |  No  | General |
-| api/v1/auth/google/callback                    |  GET   | Google callback URL                             |    Custom     |  No  | General |
-| api/v1/send-email                              |  GET   | Send mail using Celery                          |     None      |  No  | General |
-| api/v1/tasks/{task_id}                         |  GET   | Retrive the task details                        |      id       |  No  | General |
-| api/v1/redis/dogs                              |  GET   | Retrive and Store Caching using Redis           |     None      |  No  | General |
-| `🏥 HOSPITALS`                                 |        |                                                 |               |      |         |
-| api/v1/hospitals/all                           |  GET   | Retrieve all the hospitals                      | offset, limit |  No  | General |
-| api/v1/hospitals/profile                       |  GET   | Retrieve all the hospitals                      |      id       |  No  | General |
-| `🧜🏻‍♂️ DOCTORS`                                   |        |                                                 |               |      |         |
-| api/v1/users/doctor/all                        |  GET   | Retrieve all the doctors                        | offset, limit |  No  | General |
-| api/v1/users/doctors/profile                   |  GET   | Retrieve specific doctor profile                |      id       |  No  | General |
-| api/v1/users/doctors/{hospital_id}/all         |  GET   | Retrieve all the doctors of a specific hospital |      id       |  No  | General |
-| `🥶 PATIENTS`                                  |        |                                                 |               |      |         |
-| api/v1/users/patients/profile                  |  GET   | Retrieve specific patient profile               |      id       | Yes  | Patient |
-| api/v1/users/patients/profile                  |  PUT   | Update specific patient profile                 |      id       | Yes  | Patient |
-| api/v1/users/patients/profile/password         |  PUT   | Update specific patient profile password        |     None      | Yes  | Patient |
-| `❤️‍🩹 PATIENT HEALTH RECORDS`                    |        |                                                 |               |      |         |
-| api/v1/users/patients/health/records           |  Get   | Retrieve Specific patient health records        |      id       | Yes  | Patient |
-| api/v1/users/patients/health/records           |  POST  | Create health records for specific patient      |      id       | Yes  | Patient |
-| api/v1/users/patients/health/records           |  PUT   | Update specific patient health records          |      id       | Yes  | Patient |
-| api/v1/users/patients/health/records/glucoose  |  PUT   | Update specific patient blood glucose records   |      id       | Yes  | Patient |
-| api/v1/users/patients/health/records/pressure  |  PUT   | Update specific patient blood pressure records  |      id       | Yes  | Patient |
-| `🦹🏻 ADMIN USERS`                               |        |                                                 |               |      |         |
-| api/v1/admin/users/new                         |  POST  | Create new user                                 |     None      | Yes  |  Admin  |
-| api/v1/admin/users/all                         |  GET   | Retrieve all the users                          | offset, limit | Yes  |  Admin  |
-| api/v1/admin/users/profile                     |  GET   | Retrieve specific user profile                  |      id       | Yes  |  Admin  |
-| api/v1/admin/users/profile                     |  PUT   | Update specific user profile                    |      id       | Yes  |  Admin  |
-| api/v1/admin/users/profile                     | DELETE | Delete specific user profile                    |  id / [ids]   | Yes  |  Admin  |
-| api/v1/admin/users/patients/new                |  POST  | Create new patient                              |     None      | Yes  |  Admin  |
-| api/v1/admin/users/patients/all                |  GET   | Retrieve all the patinets                       | offset, limit | Yes  |  Admin  |
-| api/v1/admin/users/patients/profile            |  GET   | Retrieve specific patient profile               |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/profile            |  PUT   | Update specific patient profile                 |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/profile            | DELETE | Delete specific patient profile                 |  id / [ids]   | Yes  |  Admin  |
-| api/v1/admin/users/doctors/{hospital_id}/new   |  POST  | Create new doctor                               |      id       | Yes  |  Admin  |
-| api/v1/admin/users/doctors/all                 |  GET   | Retrieve all the doctors                        | offset, limit | Yes  |  Admin  |
-| api/v1/admin/users/doctors/profile             |  GET   | Retrieve specific doctor profile                |      id       | Yes  |  Admin  |
-| api/v1/admin/users/doctors/profile             |  PUT   | Update specific doctor profile                  |      id       | Yes  |  Admin  |
-| api/v1/admin/users/doctors/profile             | DELETE | Delete specific doctor profile                  |  id / [ids]   | Yes  |  Admin  |
-| api/v1/admin/users/doctors/{hospital_id}/all   |  GET   | Retrieve all the doctors of a specific hospital |      id       | Yes  |  Admin  |
-| `❤️‍🩹 ADMIN PATIENT HEALTH RECORDS`              |        |                                                 |               |      |         |
-| api/v1/admin/users/patients/health/records/new |  POST  | Create specific patient health records          |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/health/records/all |  GET   | Retrieve all the patient health records         | offset, limit | Yes  |  Admin  |
-| api/v1/admin/users/patients/health/records     |  GET   | Retrieve specific patient health records        |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/health/records     |  PUT   | Update specific patient health records          |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/health/records     | DELETE | Delete specific patient health records          |  id / [ids]   | Yes  |  Admin  |
-| `🏥 ADMIN HOSPITALS`                           |        |                                                 |               |      |         |
-| api/v1/admin/hospitals/new                     |  POST  | Create new hospital                             |     None      | Yes  |  Admin  |
-| api/v1/admin/hospitals/all                     |  GET   | Retrieve all the hospitals                      | offset, limit | Yes  |  Admin  |
-| api/v1/admin/hospitals/profile                 |  GET   | Retrieve specific hospital information          |      id       | Yes  |  Admin  |
-| api/v1/admin/hospitals/profile                 |  PUT   | Update specific hospital information            |      id       | Yes  |  Admin  |
-| api/v1/admin/hospitals/profile                 | DELETE | Delete specific hospital information            |  id / [ids]   | Yes  |  Admin  |
-
-<br>
-
 ## ⚙️ Setup and Installation
 
 ### 1. Prerequisites
@@ -256,7 +196,7 @@ If you intend to use the database with your locally installed applications like 
 
 ### Migrations
 
-Run the `backend cli` container from `docker desktop` application or use the following command from terminal
+Run the `backend cli` container from `docker desktop` application or use the following command from terminal.
 
 ```bash
 docker exec -it <container name> /bin/bash
@@ -267,6 +207,118 @@ Then run the following `migration` command:
 ```bash
 alembic upgrade head
 ```
+
+### Seeding
+
+Intially the database is empty, therefore after a successful migration we need to seed data into the database itself. Run the `backend cli` container from `docker desktop` application or use the following command from terminal.
+
+```bash
+docker exec -it <container name> /bin/bash
+```
+
+Then run the following `seeding` command:
+
+```bash
+python seed.py
+```
+
+### Windows Users: Adjustment (for development mode) 🔧
+
+Docker handles volumes differently in windows and if your platform is **windows**, inorder to view the changes in development mode you have to adjust a few steps in the **frontend** and **backend** containers from [\*\*compose.yaml](compose.yaml) file.
+
+```bash
+# other containers
+frontend:
+  # ...other specifications
+  # remove volume
+  # volumes:
+  #   - "./frontend:/app"
+  # add this lines (enable watch mode)
+  develop:
+    watch:
+      - action: sync
+        path: "./frontend"
+        target: "/app"
+      - action: rebuild
+        path: "./frontend/package.json"
+      - action: rebuild
+        path: "./frontend/next.config.mjs"
+backend:
+  # ...other specifications
+  # remove volume
+  # volumes:
+  #   - "./backend:/app"
+  # add this lines (enable watch mode)
+  develop:
+    watch:
+      - action: sync
+        path: "./backend"
+        target: "/code"
+      - action: rebuild
+        path: "./backend/requirements.txt"
+```
+
+<br>
+
+## 👻 **API Endpoints**
+
+| Endpoints                                      | Method | Description                                     |    Params     | Auth |  Role   |
+| :--------------------------------------------- | :----: | :---------------------------------------------- | :-----------: | :--: | :-----: |
+| api/v1/auth/login                              |  POST  | Login with credentials                          |     None      |  No  | General |
+| api/v1/auth/signup                             |  POST  | Signup with credentials                         |     None      |  No  | General |
+| api/v1/auth/logout                             |  POST  | Log out the user                                |     None      |  No  | General |
+| api/v1/auth/google                             |  GET   | Google redirect URL                             |    Custom     |  No  | General |
+| api/v1/auth/google/callback                    |  GET   | Google callback URL                             |    Custom     |  No  | General |
+| api/v1/send-email                              |  GET   | Send mail using Celery                          |     None      |  No  | General |
+| api/v1/tasks/{task_id}                         |  GET   | Retrive the task details                        |      id       |  No  | General |
+| `🏥 HOSPITALS`                                 |        |                                                 |               |      |         |
+| api/v1/hospitals/all                           |  GET   | Retrieve all the hospitals                      | offset, limit |  No  | General |
+| api/v1/hospitals/profile                       |  GET   | Retrieve all the hospitals                      |      id       |  No  | General |
+| `🧜🏻‍♂️ DOCTORS`                                   |        |                                                 |               |      |         |
+| api/v1/users/doctor/all                        |  GET   | Retrieve all the doctors                        | offset, limit |  No  | General |
+| api/v1/users/doctors/profile                   |  GET   | Retrieve specific doctor profile                |      id       |  No  | General |
+| api/v1/users/doctors/{hospital_id}/all         |  GET   | Retrieve all the doctors of a specific hospital |      id       |  No  | General |
+| `🥶 PATIENTS`                                  |        |                                                 |               |      |         |
+| api/v1/users/patients/profile                  |  GET   | Retrieve specific patient profile               |      id       | Yes  | Patient |
+| api/v1/users/patients/profile                  |  PUT   | Update specific patient profile                 |      id       | Yes  | Patient |
+| api/v1/users/patients/profile/password         |  PUT   | Update specific patient profile password        |     None      | Yes  | Patient |
+| `❤️‍🩹 PATIENT HEALTH RECORDS`                    |        |                                                 |               |      |         |
+| api/v1/users/patients/health/records           |  Get   | Retrieve Specific patient health records        |      id       | Yes  | Patient |
+| api/v1/users/patients/health/records           |  POST  | Create health records for specific patient      |      id       | Yes  | Patient |
+| api/v1/users/patients/health/records           |  PUT   | Update specific patient health records          |      id       | Yes  | Patient |
+| api/v1/users/patients/health/records/glucoose  |  PUT   | Update specific patient blood glucose records   |      id       | Yes  | Patient |
+| api/v1/users/patients/health/records/pressure  |  PUT   | Update specific patient blood pressure records  |      id       | Yes  | Patient |
+| `🦹🏻 ADMIN USERS`                               |        |                                                 |               |      |         |
+| api/v1/admin/users/new                         |  POST  | Create new user                                 |     None      | Yes  |  Admin  |
+| api/v1/admin/users/all                         |  GET   | Retrieve all the users                          | offset, limit | Yes  |  Admin  |
+| api/v1/admin/users/profile                     |  GET   | Retrieve specific user profile                  |      id       | Yes  |  Admin  |
+| api/v1/admin/users/profile                     |  PUT   | Update specific user profile                    |      id       | Yes  |  Admin  |
+| api/v1/admin/users/profile                     | DELETE | Delete specific user profile                    |  id / [ids]   | Yes  |  Admin  |
+| api/v1/admin/users/patients/new                |  POST  | Create new patient                              |     None      | Yes  |  Admin  |
+| api/v1/admin/users/patients/all                |  GET   | Retrieve all the patinets                       | offset, limit | Yes  |  Admin  |
+| api/v1/admin/users/patients/profile            |  GET   | Retrieve specific patient profile               |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/profile            |  PUT   | Update specific patient profile                 |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/profile            | DELETE | Delete specific patient profile                 |  id / [ids]   | Yes  |  Admin  |
+| api/v1/admin/users/doctors/{hospital_id}/new   |  POST  | Create new doctor                               |      id       | Yes  |  Admin  |
+| api/v1/admin/users/doctors/all                 |  GET   | Retrieve all the doctors                        | offset, limit | Yes  |  Admin  |
+| api/v1/admin/users/doctors/profile             |  GET   | Retrieve specific doctor profile                |      id       | Yes  |  Admin  |
+| api/v1/admin/users/doctors/profile             |  PUT   | Update specific doctor profile                  |      id       | Yes  |  Admin  |
+| api/v1/admin/users/doctors/profile             | DELETE | Delete specific doctor profile                  |  id / [ids]   | Yes  |  Admin  |
+| api/v1/admin/users/doctors/{hospital_id}/all   |  GET   | Retrieve all the doctors of a specific hospital |      id       | Yes  |  Admin  |
+| `❤️‍🩹 ADMIN PATIENT HEALTH RECORDS`              |        |                                                 |               |      |         |
+| api/v1/admin/users/patients/health/records/new |  POST  | Create specific patient health records          |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/health/records/all |  GET   | Retrieve all the patient health records         | offset, limit | Yes  |  Admin  |
+| api/v1/admin/users/patients/health/records     |  GET   | Retrieve specific patient health records        |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/health/records     |  PUT   | Update specific patient health records          |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/health/records     | DELETE | Delete specific patient health records          |  id / [ids]   | Yes  |  Admin  |
+| `🏥 ADMIN HOSPITALS`                           |        |                                                 |               |      |         |
+| api/v1/admin/hospitals/new                     |  POST  | Create new hospital                             |     None      | Yes  |  Admin  |
+| api/v1/admin/hospitals/all                     |  GET   | Retrieve all the hospitals                      | offset, limit | Yes  |  Admin  |
+| api/v1/admin/hospitals/profile                 |  GET   | Retrieve specific hospital information          |      id       | Yes  |  Admin  |
+| api/v1/admin/hospitals/profile                 |  PUT   | Update specific hospital information            |      id       | Yes  |  Admin  |
+| api/v1/admin/hospitals/profile                 | DELETE | Delete specific hospital information            |  id / [ids]   | Yes  |  Admin  |
+
+<br>
 
 # 🤝 Contributing
 
@@ -381,9 +433,8 @@ docker volume rm <volume name>
 
 ### 🛠️ IP Address Listing
 
-```
+```bash
 # for mac users
-
 cat /etc/hosts
 sudo lsof -iTCP -sTCP:LISTEN -P -n
 sudo lsof -i TCP:PORTNUMBER (PORTNUMBER e.g, 3000)
