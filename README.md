@@ -1,90 +1,306 @@
-Gluco Guide is an Integrated Heath Monitoring System for Diabetes Patients.
+# 🚀 **NextJS with FastAPI Backend Starter**
 
-## Getting Started using Docker
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Postgres](https://img.shields.io/badge/Postgres-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white&style=for-the-badge)
 
-- First [Install Docker](https://docs.docker.com/get-docker/) on your machine.
+## 🌟 **Overview**
 
-Build the project container with the following command:
+This project is a full-stack web application built with:
 
-```bash
-docker-compose up --build
+- **[FastAPI](https://fastapi.tiangolo.com/)** for the backend.
+- **[Next.js](https://nextjs.org/)** for the frontend.
+- **[PostgreSQL](https://www.postgresql.org/)** for the database.
+- **[Redis](https://redis.io/)** as a caching layer and task broker.
+- **[Celery](https://docs.celeryq.dev/en/stable/getting-started/introduction.html)** for task management and background jobs.
+- **[Docker](https://www.docker.com/)** for containerization and deployment.
+- **[Ngnix](https://nginx.org/en/)** as Reverse Proxy Server.
+
+## 🛠️ **Features**
+
+- User authentication **(Built-in/Google)** with role-based access control.
+- Frontend and Backend services are automatically proxied in a single port `8000` through **Nginx**.
+- API endpoints for different user roles **(e.g., Admin, User, Doctor)**.
+- Applying Caching using **Redis**.
+- Asynchronous task processing with **Celery**.
+- Fully containerized setup using **Docker**.
+- All sensitive data is encrypted using **AES (Advanced Encryption Standard) in GCM (Galois/Counter Mode)** for robust data protection, ensuring confidentiality, integrity, and authenticity both in **backend** and **frontend**.
+- Storing Hashed Passowords for security enhancement.
+- General users receive short, unique URLs generated securely from `UIDs`. This ensures user-friendly links while maintaining data security.
+- rest will be updated
+
+## 📂 **Directory Structure**
+
+```plaintext
+├── backend
+│   ├── alembic
+│   ├── app
+│   │   ├── db           # Postgres Database
+│   │   ├── routers      # API Endpoints
+│   │   ├── workers      # Celery Tasks
+│   │   ├── main.py      # FastAPI Application
+│   ├── main.py          # Declared Main FasAPI Application
+│   ├── .env             # Environment variables for the backend
+│   ├── alembic.ini      # Generated Alembic file
+│   └── Dockerfile       # Docker configuration for the backend
+├── frontend
+│   ├── app              # Next.js app router
+│   ├── .env             # Environment variables for the frontend
+│   └── Dockerfile       # Docker configuration for the frontend
+├── nginx
+│   └── nginx.conf       # Nginx configuration for backend and frontend
+├── .env                 # Environment variables for the root
+└── compose.yaml         # Multi-container orchestration
 ```
 
-Run the container with the following command:
+## 👻 **API Endpoints**
+
+| Endpoints                                      | Method | Description                                     |    Params     | Auth |  Role   |
+| :--------------------------------------------- | :----: | :---------------------------------------------- | :-----------: | :--: | :-----: |
+| api/v1/auth/login                              |  POST  | Login with credentials                          |     None      |  No  | General |
+| api/v1/auth/signup                             |  POST  | Signup with credentials                         |     None      |  No  | General |
+| api/v1/auth/google                             |  GET   | Google redirect URL                             |    Custom     |  No  | General |
+| api/v1/auth/google/callback                    |  GET   | Google callback URL                             |    Custom     |  No  | General |
+| api/v1/send-email                              |  GET   | Send mail using Celery                          |     None      |  No  | General |
+| api/v1/tasks/{task_id}                         |  GET   | Retrive the task details                        |      id       |  No  | General |
+| api/v1/redis/dogs                              |  GET   | Retrive and Store Caching using Redis           |     None      |  No  | General |
+| `🏥 HOSPITALS`                                 |        |                                                 |               |      |         |
+| api/v1/hospitals/all                           |  GET   | Retrieve all the hospitals                      | offset, limit |  No  | General |
+| api/v1/hospitals/profile                       |  GET   | Retrieve all the hospitals                      |      id       |  No  | General |
+| `🧜🏻‍♂️ DOCTORS`                                   |        |                                                 |               |      |         |
+| api/v1/users/doctor/all                        |  GET   | Retrieve all the doctors                        | offset, limit |  No  | General |
+| api/v1/users/doctors/profile                   |  GET   | Retrieve specific doctor profile                |      id       |  No  | General |
+| api/v1/users/doctors/{hospital_id}/all         |  GET   | Retrieve all the doctors of a specific hospital |      id       |  No  | General |
+| `🥶 PATIENTS`                                  |        |                                                 |               |      |         |
+| api/v1/users/patients/profile                  |  GET   | Retrieve specific patient profile               |      id       | Yes  | Patient |
+| api/v1/users/patients/profile                  |  PUT   | Update specific patient profile                 |      id       | Yes  | Patient |
+| api/v1/users/patients/profile/password         |  PUT   | Update specific patient profile password        |     None      | Yes  | Patient |
+| `❤️‍🩹 PATIENT HEALTH RECORDS`                    |        |                                                 |               |      |         |
+| api/v1/users/patients/health/records           |  Get   | Retrieve Specific patient health records        |      id       | Yes  | Patient |
+| api/v1/users/patients/health/records           |  POST  | Create health records for specific patient      |      id       | Yes  | Patient |
+| api/v1/users/patients/health/records           |  PUT   | Update specific patient health records          |      id       | Yes  | Patient |
+| api/v1/users/patients/health/records/glucoose  |  PUT   | Update specific patient blood glucose records   |      id       | Yes  | Patient |
+| api/v1/users/patients/health/records/pressure  |  PUT   | Update specific patient blood pressure records  |      id       | Yes  | Patient |
+| `🦹🏻 ADMIN USERS`                               |        |                                                 |               |      |         |
+| api/v1/admin/users/new                         |  POST  | Create new user                                 |     None      | Yes  |  Admin  |
+| api/v1/admin/users/all                         |  GET   | Retrieve all the users                          | offset, limit | Yes  |  Admin  |
+| api/v1/admin/users/profile                     |  GET   | Retrieve specific user profile                  |      id       | Yes  |  Admin  |
+| api/v1/admin/users/profile                     |  PUT   | Update specific user profile                    |      id       | Yes  |  Admin  |
+| api/v1/admin/users/profile                     | DELETE | Delete specific user profile                    |  id / [ids]   | Yes  |  Admin  |
+| api/v1/admin/users/patients/new                |  POST  | Create new patient                              |     None      | Yes  |  Admin  |
+| api/v1/admin/users/patients/all                |  GET   | Retrieve all the patinets                       | offset, limit | Yes  |  Admin  |
+| api/v1/admin/users/patients/profile            |  GET   | Retrieve specific patient profile               |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/profile            |  PUT   | Update specific patient profile                 |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/profile            | DELETE | Delete specific patient profile                 |  id / [ids]   | Yes  |  Admin  |
+| api/v1/admin/users/doctors/{hospital_id}/new   |  POST  | Create new doctor                               |      id       | Yes  |  Admin  |
+| api/v1/admin/users/doctors/all                 |  GET   | Retrieve all the doctors                        | offset, limit | Yes  |  Admin  |
+| api/v1/admin/users/doctors/profile             |  GET   | Retrieve specific doctor profile                |      id       | Yes  |  Admin  |
+| api/v1/admin/users/doctors/profile             |  PUT   | Update specific doctor profile                  |      id       | Yes  |  Admin  |
+| api/v1/admin/users/doctors/profile             | DELETE | Delete specific doctor profile                  |  id / [ids]   | Yes  |  Admin  |
+| api/v1/admin/users/doctors/{hospital_id}/all   |  GET   | Retrieve all the doctors of a specific hospital |      id       | Yes  |  Admin  |
+| `❤️‍🩹 ADMIN PATIENT HEALTH RECORDS`              |        |                                                 |               |      |         |
+| api/v1/admin/users/patients/health/records/new |  POST  | Create specific patient health records          |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/health/records/all |  GET   | Retrieve all the patient health records         | offset, limit | Yes  |  Admin  |
+| api/v1/admin/users/patients/health/records     |  GET   | Retrieve specific patient health records        |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/health/records     |  PUT   | Update specific patient health records          |      id       | Yes  |  Admin  |
+| api/v1/admin/users/patients/health/records     | DELETE | Delete specific patient health records          |  id / [ids]   | Yes  |  Admin  |
+| `🏥 ADMIN HOSPITALS`                           |        |                                                 |               |      |         |
+| api/v1/admin/hospitals/new                     |  POST  | Create new hospital                             |     None      | Yes  |  Admin  |
+| api/v1/admin/hospitals/all                     |  GET   | Retrieve all the hospitals                      | offset, limit | Yes  |  Admin  |
+| api/v1/admin/hospitals/profile                 |  GET   | Retrieve specific hospital information          |      id       | Yes  |  Admin  |
+| api/v1/admin/hospitals/profile                 |  PUT   | Update specific hospital information            |      id       | Yes  |  Admin  |
+| api/v1/admin/hospitals/profile                 | DELETE | Delete specific hospital information            |  id / [ids]   | Yes  |  Admin  |
+
+<br>
+
+## ⚙️ Setup and Installation
+
+### 1. Prerequisites
+
+Ensure you have the following installed:
+
+- [docker](https://docs.docker.com/get-docker/)
+- [nodejs](https://nodejs.org/en) (Optional)
+- [python](https://www.python.org/downloads/) (Optional)
+
+### 2. Clone the repository
 
 ```bash
+git clone https://github.com/firedev99/glucoguide.git glucoguide
+cd glucoguide
+```
+
+### 3. Environment Variables
+
+Create a `.env` file the root directory
+
+```js
+POSTGRES_USER=
+POSTGRES_PASS=
+POSTGRES_DATABASE_NAME=
+PGADMIN_DEFAULT_EMAIL=
+PGADMIN_DEFAULT_PASS=
+REDIS_PASSWORD=
+FLOWER_BASIC_AUTH=
+```
+
+Navigate to backend folder and create another `.env` file in that directory.
+
+```bash
+cd backend
+```
+
+```js
+FRONTEND_ORIGINS=
+ACCESS_TOKEN_EXPIRES=
+REFRESH_TOKEN_EXPIRES=
+HASHING_SECRET_KEY=
+JWT_SECRET_KEY=
+JWT_ALGORITHM=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=
+OWNER_EMAIL=
+SMTP_PASSWORD=
+SMTP_HOST=
+SMTP_PORT=
+POSTGRES_USER=
+POSTGRES_PASS=
+POSTGRES_HOST=
+POSTGRES_PORT=
+POSTGRES_DATABASE_NAME=
+PGADMIN_DEFAULT_EMAIL=
+PGADMIN_DEFAULT_PASS=
+REDIS_PASSWORD=
+REDIS_HOST=
+REDIS_PORT=
+FLOWER_BASIC_AUTH=
+CELERY_BROKER_URL=
+CELERY_RESULT_BACKEND=
+```
+
+Navigate to frontend folder and create another `.env` file in that directory.
+
+```bash
+cd frontend
+```
+
+```js
+NEXT_PUBLIC_MAPBOX_TOKEN=
+NEXT_PUBLIC_ENCRYPTION_SECRET_KEY=
+NEXT_PUBLIC_API=
+NEXT_PUBLIC_URL=
+```
+
+### 4. Create a `virtualenv` in the backend folder (Optional)
+
+```py
+python3 -m venv venv
+```
+
+- on mac activate using command `source venv/bin/acitvate`
+- on windows activate using command `venv/Scripts/acitvate`
+
+### 5. Start the application
+
+Run the application from the root folder using `docker-compose` command:
+
+```bash
+cd glucoguide
 docker-compose up
-# or
-docker compose up --watch
 ```
 
-Development: To view live changes in the code either run `docker compose up --watch` or press `w` after running the command `docker-compose up` from the terminal.
+- After loading all the resources and databases you can visit [http://localhost:8000](http://localhost:8000) where `Frontend` and `Backend` services are automatically proxied through `Nginx`.
 
-## Getting Started Locally
+### 6. Run the Applications Locally (Optional / Will take other additional steps)
 
-To start the project locallay make sure to have the following requirements installed in your machine.
-
-- [Python](https://www.python.org/downloads/)
-- [NodeJS](https://nodejs.org/en/download/source-code)
-- `optional` [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable)
-
-Then open your terminal and install the project packages using the following command:
+### Frontend:
 
 ```bash
-yarn
-# or
-npm install
+cd frontend
+yarn dev
 ```
 
-Run the project locally in development mode using the following command:
+### Backend:
+
+make sure the backend virtual env is activated [check this instruction](#4-create-a-virtualenv-in-the-backend-folder-optional).
 
 ```bash
-yarn fire
-# or
-npm run fire
+cd backend
+python main.py
 ```
 
-## Collaborate to this project
+### 7. Connect the PostgreSQL Database
 
-- For collaboration you need to fork and `clone` or `dowload` the repository.
+### Dpage/PgAdmin4:
 
-### How to Fork the repository
+Go to [http:/localhost:8080](http:/localhost:8080) and add the following stuffs:
 
-- Go to this page [GlucoGuide](https://fastapi.tiangolo.com/tutorial), there is a button named `Fork` in the top right corner of the page.
+- host: `postgres`
+- port: `5433`
+- user: `postgres`
+- db: `gluco_guide`
 
-### How to Clone the repository
+### Localhost Machine
 
-- Create a directory, for example `gluco-guide-diabetes-patients`.
-- Enter in the newly created directory:
+If you intend to use the database with your locally installed applications like `dbeaver` or `pgAdmin (desktop)` just change the host to `localhost`
+
+- host: `localhost`
+- port: `5433`
+- user: `postgres`
+- db: `gluco_guide`
+
+### Migrations
+
+Run the `backend cli` container from `docker desktop` application or use the following command from terminal
 
 ```bash
-cd gluco-guide-diabetes-patients
+docker exec -it <container name> /bin/bash
 ```
 
-- Clone the the repository manually into `gluco-guide-diabetes-patients` directory:
+Then run the following `migration` command:
 
 ```bash
-git clone https://github.com/firedev99/gluco-guide-diabetes-patients.git
+alembic upgrade head
 ```
 
-### How to push codes into the repository
+# 🤝 Contributing
+
+### 1. Create a Branch
+
+Create a new branch for your feature or bug fix:
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+### 2. Commit Your Changes
+
+Commit your changes with descriptive message:
 
 ```bash
 git add .
-git commit -m "commit message"
-git push -u origin master
+git commit -m "description of your feature"
+git push origin feature/your-feature-name
 ```
 
-### How to Merge or Sync update codes from the main repository (original repository):
+### 3. Open a Pull Request
+
+- Navigate to the original repository on GitHub.
+- Click the `Pull Requests` tab.
+- Click `New Pull Request` and select your branch.
+- Provide a clear `title` and description of your changes, and submit the pull request.
+
+# 👨🏻‍🍳 Merging and Syncing Updates
 
 To add upstream remote to the forked repository, run the following command
 
 ```bash
-<<<<<<< HEAD
-git remote add upstream https://github.com/firedev99/gluco-guide-diabetes-patients.git
-=======
 git remote add upstream https://github.com/firedev99/nextjs-fastapi-docker.git
->>>>>>> ae56bef (base backend, data encryption, role based routings w custom middleware, updated readme)
 ```
 
 To synchronized with the original repository, run the following command
@@ -93,31 +309,6 @@ To synchronized with the original repository, run the following command
 git fetch upstream
 git merge upstream/master
 ```
-
-<<<<<<< HEAD
-
-## Learn More
-
-To learn more about HTML, CSS, JavaScript, and TailwindCSS take a look at the following resources:
-
-- [HTML](https://www.w3schools.com/html)
-- [CSS](https://www.w3schools.com/css)
-- [JavaScript](https://www.w3schools.com/js)
-- [TailwindCSS](https://tailwindcss.com/docs)
-
-To learn more about ReactJS, take a look at the following resources:
-
-- [ReactJS Reference](https://react.dev/reference/react) - learn about ReactJS features.
-- [Learn ReactJS](https://react.dev/learn) - an interactive ReactJS tutorial.
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-To learn more about FastAPI, take a look at the following resources:
-
-- # [Learn FastAPI](https://fastapi.tiangolo.com/tutorial) - learn about FastAPI features.
 
 # 👨‍🎨 Some Useful Commands to Help with inpecting this project
 
@@ -238,4 +429,3 @@ If you have any questions, feel free to reach out:
 - **Github** - [@firedev99](https://github.com/firedev99)
 - **Twitter** - [@firethedev99](https://twitter.com/thedevguy99)
 - **Email** - firethedev@gmail.com
-  > > > > > > > ae56bef (base backend, data encryption, role based routings w custom middleware, updated readme)
