@@ -129,11 +129,13 @@ Navigate to frontend folder and create another `.env` file in that directory.
 cd frontend
 ```
 
-```js
+```bash
 NEXT_PUBLIC_MAPBOX_TOKEN=
 NEXT_PUBLIC_ENCRYPTION_SECRET_KEY=
 NEXT_PUBLIC_API=
-NEXT_PUBLIC_URL=
+NEXT_PUBLIC_URL=http://localhost:8000
+// this is needed for nextjs middleware, cause the actual frontend is getting redirected from port 3000 to 8000 through nginx
+NEXT_PUBLIC_OG_URL=http://localhost:3000
 ```
 
 ### 4. Create a `virtualenv` in the backend folder (Optional)
@@ -224,7 +226,7 @@ python seed.py
 
 ### Windows Users: Adjustment (for development mode) 🔧
 
-Docker handles volumes differently in windows and if your platform is **windows**, inorder to view the changes in development mode you have to adjust a few steps in the **frontend** and **backend** containers from [\*\*compose.yaml](compose.yaml) file.
+Docker handles volumes differently in windows and if your platform is **windows**, inorder to view the changes in development mode you have to adjust a few steps in the **frontend** and **backend** containers from [**compose.yaml**](compose.yaml) file.
 
 ```bash
 # other containers
