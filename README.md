@@ -134,7 +134,7 @@ NEXT_PUBLIC_MAPBOX_TOKEN=
 NEXT_PUBLIC_ENCRYPTION_SECRET_KEY=
 NEXT_PUBLIC_API=
 NEXT_PUBLIC_URL=http://localhost:8000
-// this is needed for nextjs middleware, cause the actual frontend is getting redirected from port 3000 to 8000 through nginx
+# this is needed for nextjs middleware, cause the actual frontend is getting redirected from port 3000 to 8000 through nginx
 NEXT_PUBLIC_OG_URL=http://localhost:3000
 ```
 
