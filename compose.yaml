@@ -16,17 +16,17 @@ services:
     ports:
       - "3000:3000"
     command: "yarn dev"
-    volumes:
-      - "./frontend:/app"
-    # develop:
-    #   watch:
-    #     - action: sync
-    #       path: "./frontend"
-    #       target: "/app"
-    #     - action: rebuild
-    #       path: "./frontend/package.json"
-    #     - action: rebuild
-    #       path: "./frontend/next.config.mjs"
+    # volumes:
+    #   - "./frontend:/app"
+    develop:
+      watch:
+        - action: sync
+          path: "./frontend"
+          target: "/app"
+        - action: rebuild
+          path: "./frontend/package.json"
+        - action: rebuild
+          path: "./frontend/next.config.mjs"
 
   backend:
     container_name: glucoguide-backend
@@ -37,15 +37,15 @@ services:
       - postgres
       - redis
     command: "python main.py"
-    volumes:
-      - "./backend:/code"
-    # develop:
-    #   watch:
-    #     - action: sync
-    #       path: "./backend"
-    #       target: "/code"
-    #     - action: rebuild
-    #       path: "./backend/requirements.txt"
+    # volumes:
+    #   - "./backend:/code"
+    develop:
+      watch:
+        - action: sync
+          path: "./backend"
+          target: "/code"
+        - action: rebuild
+          path: "./backend/requirements.txt"
 
   postgres:
     container_name: glucoguide-db
