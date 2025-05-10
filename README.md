@@ -31,6 +31,12 @@ This project is a full-stack web application built with:
 - All sensitive data is encrypted using **AES (Advanced Encryption Standard) in GCM (Galois/Counter Mode)** for robust data protection, ensuring confidentiality, integrity, and authenticity both in **backend** and **frontend**.
 - Storing Hashed Passowords for security enhancement.
 - General users receive short, unique URLs generated securely from `UIDs`. This ensures user-friendly links while maintaining data security.
+- Realtime chatting system b/w doctor and patient
+- Realtime chatting w admins for help
+- Realtime health monitoring feature for EHR
+- Organizing medications feature
+- Realtime consultation system
+- Modern UI
 - rest will be updated
 
 ## 📂 **Directory Structure**
@@ -39,6 +45,7 @@ This project is a full-stack web application built with:
 ├── backend
 │   ├── alembic
 │   ├── app
+│   │   ├── ai           # AI Wrapper (Needs Update)
 │   │   ├── db           # Postgres Database
 │   │   ├── routers      # API Endpoints
 │   │   ├── workers      # Celery Tasks
@@ -79,13 +86,13 @@ cd glucoguide
 Create a `.env` file the root directory
 
 ```js
-POSTGRES_USER=
+POSTGRES_USER=postgres
 POSTGRES_PASS=
-POSTGRES_DATABASE_NAME=
-PGADMIN_DEFAULT_EMAIL=
+POSTGRES_DATABASE_NAME=gluco_guide
+PGADMIN_DEFAULT_EMAIL=admin@glucoguide.com
 PGADMIN_DEFAULT_PASS=
 REDIS_PASSWORD=
-FLOWER_BASIC_AUTH=
+FLOWER_BASIC_AUTH="username:password"
 ```
 
 Navigate to backend folder and create another `.env` file in that directory.
@@ -95,32 +102,40 @@ cd backend
 ```
 
 ```js
-FRONTEND_ORIGINS=
-ACCESS_TOKEN_EXPIRES=
-REFRESH_TOKEN_EXPIRES=
-HASHING_SECRET_KEY=
+FRONTEND_ORIGINS=http://localhost:3000, http://localhost:8000
+
+ACCESS_TOKEN_EXPIRES=120
+REFRESH_TOKEN_EXPIRES=5
+HASHING_SECRET_KEY="base64 string w a 32bytes length [openssl rand -base64 32]"
 JWT_SECRET_KEY=
-JWT_ALGORITHM=
+JWT_ALGORITHM=HS256
+
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GOOGLE_REDIRECT_URI=
-OWNER_EMAIL=
+
+OWNER_EMAIL=firethedev@gmail.com
 SMTP_PASSWORD=
-SMTP_HOST=
-SMTP_PORT=
-POSTGRES_USER=
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+
+POSTGRES_USER=postgres
 POSTGRES_PASS=
-POSTGRES_HOST=
-POSTGRES_PORT=
-POSTGRES_DATABASE_NAME=
-PGADMIN_DEFAULT_EMAIL=
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5433
+POSTGRES_DATABASE_NAME=gluco_guide
+PGADMIN_DEFAULT_EMAIL=admin@glucoguide.com
 PGADMIN_DEFAULT_PASS=
+
 REDIS_PASSWORD=
-REDIS_HOST=
-REDIS_PORT=
-FLOWER_BASIC_AUTH=
-CELERY_BROKER_URL=
-CELERY_RESULT_BACKEND=
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+FLOWER_BASIC_AUTH="username:password"
+CELERY_BROKER_URL=redis://redis:6379/0
+CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+DEEPSEEK_API_KEY=
 ```
 
 Navigate to frontend folder and create another `.env` file in that directory.
@@ -130,9 +145,10 @@ cd frontend
 ```
 
 ```bash
+
 NEXT_PUBLIC_MAPBOX_TOKEN=
-NEXT_PUBLIC_ENCRYPTION_SECRET_KEY=
-NEXT_PUBLIC_API=
+NEXT_PUBLIC_ENCRYPTION_SECRET_KEY="base64 string w a 32bytes length [openssl rand -base64 32]"
+NEXT_PUBLIC_API=http://localhost:8000/api/v1
 NEXT_PUBLIC_URL=http://localhost:8000
 # this is needed for nextjs middleware, cause the actual frontend is getting redirected from port 3000 to 8000 through nginx
 NEXT_PUBLIC_OG_URL=http://localhost:3000
@@ -154,6 +170,12 @@ Run the application from the root folder using `docker-compose` command:
 ```bash
 cd glucoguide
 docker-compose up
+```
+
+If the operating system is `windows` use `--watch` flag to enable watch mode
+
+```bash
+docker compose up --watch
 ```
 
 - After loading all the resources and databases you can visit [http://localhost:8000](http://localhost:8000) where `Frontend` and `Backend` services are automatically proxied through `Nginx`.
@@ -264,61 +286,63 @@ backend:
 
 ## 👻 **API Endpoints**
 
-| Endpoints                                      | Method | Description                                     |    Params     | Auth |  Role   |
-| :--------------------------------------------- | :----: | :---------------------------------------------- | :-----------: | :--: | :-----: |
-| api/v1/auth/login                              |  POST  | Login with credentials                          |     None      |  No  | General |
-| api/v1/auth/signup                             |  POST  | Signup with credentials                         |     None      |  No  | General |
-| api/v1/auth/logout                             |  POST  | Log out the user                                |     None      |  No  | General |
-| api/v1/auth/google                             |  GET   | Google redirect URL                             |    Custom     |  No  | General |
-| api/v1/auth/google/callback                    |  GET   | Google callback URL                             |    Custom     |  No  | General |
-| api/v1/send-email                              |  GET   | Send mail using Celery                          |     None      |  No  | General |
-| api/v1/tasks/{task_id}                         |  GET   | Retrive the task details                        |      id       |  No  | General |
-| `🏥 HOSPITALS`                                 |        |                                                 |               |      |         |
-| api/v1/hospitals/all                           |  GET   | Retrieve all the hospitals                      | offset, limit |  No  | General |
-| api/v1/hospitals/profile                       |  GET   | Retrieve all the hospitals                      |      id       |  No  | General |
-| `🧜🏻‍♂️ DOCTORS`                                   |        |                                                 |               |      |         |
-| api/v1/users/doctor/all                        |  GET   | Retrieve all the doctors                        | offset, limit |  No  | General |
-| api/v1/users/doctors/profile                   |  GET   | Retrieve specific doctor profile                |      id       |  No  | General |
-| api/v1/users/doctors/{hospital_id}/all         |  GET   | Retrieve all the doctors of a specific hospital |      id       |  No  | General |
-| `🥶 PATIENTS`                                  |        |                                                 |               |      |         |
-| api/v1/users/patients/profile                  |  GET   | Retrieve specific patient profile               |      id       | Yes  | Patient |
-| api/v1/users/patients/profile                  |  PUT   | Update specific patient profile                 |      id       | Yes  | Patient |
-| api/v1/users/patients/profile/password         |  PUT   | Update specific patient profile password        |     None      | Yes  | Patient |
-| `❤️‍🩹 PATIENT HEALTH RECORDS`                    |        |                                                 |               |      |         |
-| api/v1/users/patients/health/records           |  Get   | Retrieve Specific patient health records        |      id       | Yes  | Patient |
-| api/v1/users/patients/health/records           |  POST  | Create health records for specific patient      |      id       | Yes  | Patient |
-| api/v1/users/patients/health/records           |  PUT   | Update specific patient health records          |      id       | Yes  | Patient |
-| api/v1/users/patients/health/records/glucoose  |  PUT   | Update specific patient blood glucose records   |      id       | Yes  | Patient |
-| api/v1/users/patients/health/records/pressure  |  PUT   | Update specific patient blood pressure records  |      id       | Yes  | Patient |
-| `🦹🏻 ADMIN USERS`                               |        |                                                 |               |      |         |
-| api/v1/admin/users/new                         |  POST  | Create new user                                 |     None      | Yes  |  Admin  |
-| api/v1/admin/users/all                         |  GET   | Retrieve all the users                          | offset, limit | Yes  |  Admin  |
-| api/v1/admin/users/profile                     |  GET   | Retrieve specific user profile                  |      id       | Yes  |  Admin  |
-| api/v1/admin/users/profile                     |  PUT   | Update specific user profile                    |      id       | Yes  |  Admin  |
-| api/v1/admin/users/profile                     | DELETE | Delete specific user profile                    |  id / [ids]   | Yes  |  Admin  |
-| api/v1/admin/users/patients/new                |  POST  | Create new patient                              |     None      | Yes  |  Admin  |
-| api/v1/admin/users/patients/all                |  GET   | Retrieve all the patinets                       | offset, limit | Yes  |  Admin  |
-| api/v1/admin/users/patients/profile            |  GET   | Retrieve specific patient profile               |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/profile            |  PUT   | Update specific patient profile                 |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/profile            | DELETE | Delete specific patient profile                 |  id / [ids]   | Yes  |  Admin  |
-| api/v1/admin/users/doctors/{hospital_id}/new   |  POST  | Create new doctor                               |      id       | Yes  |  Admin  |
-| api/v1/admin/users/doctors/all                 |  GET   | Retrieve all the doctors                        | offset, limit | Yes  |  Admin  |
-| api/v1/admin/users/doctors/profile             |  GET   | Retrieve specific doctor profile                |      id       | Yes  |  Admin  |
-| api/v1/admin/users/doctors/profile             |  PUT   | Update specific doctor profile                  |      id       | Yes  |  Admin  |
-| api/v1/admin/users/doctors/profile             | DELETE | Delete specific doctor profile                  |  id / [ids]   | Yes  |  Admin  |
-| api/v1/admin/users/doctors/{hospital_id}/all   |  GET   | Retrieve all the doctors of a specific hospital |      id       | Yes  |  Admin  |
-| `❤️‍🩹 ADMIN PATIENT HEALTH RECORDS`              |        |                                                 |               |      |         |
-| api/v1/admin/users/patients/health/records/new |  POST  | Create specific patient health records          |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/health/records/all |  GET   | Retrieve all the patient health records         | offset, limit | Yes  |  Admin  |
-| api/v1/admin/users/patients/health/records     |  GET   | Retrieve specific patient health records        |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/health/records     |  PUT   | Update specific patient health records          |      id       | Yes  |  Admin  |
-| api/v1/admin/users/patients/health/records     | DELETE | Delete specific patient health records          |  id / [ids]   | Yes  |  Admin  |
-| `🏥 ADMIN HOSPITALS`                           |        |                                                 |               |      |         |
-| api/v1/admin/hospitals/new                     |  POST  | Create new hospital                             |     None      | Yes  |  Admin  |
-| api/v1/admin/hospitals/all                     |  GET   | Retrieve all the hospitals                      | offset, limit | Yes  |  Admin  |
-| api/v1/admin/hospitals/profile                 |  GET   | Retrieve specific hospital information          |      id       | Yes  |  Admin  |
-| api/v1/admin/hospitals/profile                 |  PUT   | Update specific hospital information            |      id       | Yes  |  Admin  |
-| api/v1/admin/hospitals/profile                 | DELETE | Delete specific hospital information            |  id / [ids]   | Yes  |  Admin  |
+| Endpoints                                              |  Method   | Description                                                              |                      Params                      | Auth |          Role          |
+| :----------------------------------------------------- | :-------: | :----------------------------------------------------------------------- | :----------------------------------------------: | :--: | :--------------------: |
+| api/v1/auth/login                                      |   POST    | Login with credentials                                                   |                       None                       | N/A  |        General         |
+| api/v1/auth/signup                                     |   POST    | Signup with credentials                                                  |                       None                       | N/A  |        General         |
+| api/v1/auth/logout                                     |   POST    | Log out functionality                                                    |                       None                       | N/A  |        General         |
+| api/v1/auth/google                                     |    GET    | Google redirect URL                                                      |                      Custom                      | N/A  |        General         |
+| api/v1/auth/google/callback                            |    GET    | Google callback URL                                                      |                      Custom                      | N/A  |        General         |
+| api/v1/send-email                                      |    GET    | Send mail using Celery (Automation)                                      |                       None                       | N/A  |        General         |
+| api/v1/tasks/{task_id}                                 |    GET    | Retrive the Celery task details                                          |                        id                        | N/A  |        General         |
+| `🍌 DIET`                                              |           |                                                                          |                                                  |      |                        |
+| api/v1/diet/meal                                       |    GET    | Retrieve all the meals available                                         |             q, page, limit, category             | Yes  |    Patient, Doctor     |
+| `🏥 HOSPITALS`                                         |           |                                                                          |                                                  |      |                        |
+| api/v1/hospitals/info                                  |    GET    | Retrieve all the hospitals                                               |            q, page, limit, locations             | N/A  |        General         |
+| api/v1/hospitals/{id}/info                             |    GET    | Retrieve a specific hospital                                             |                        id                        | N/A  |        General         |
+| api/v1/hospitals/tags/cities                           |    GET    | Retrieve all hospital locations                                          |                       N/A                        | N/A  |        General         |
+| api/v1/hospitals/tags/names                            |    GET    | Retrieve all hospital name                                               |                       N/A                        | N/A  |        General         |
+| `🧜🏻‍♂️ DOCTORS`                                           |           |                                                                          |                                                  |      |                        |
+| api/v1/doctor/info                                     |    GET    | Retrieve all the doctors                                                 | q, page, limit, hospitals, locations, experience | N/A  |        General         |
+| api/v1/doctors/{id}/info                               |    GET    | Retrieve specific doctor informations                                    |                        id                        | N/A  |        General         |
+| api/v1/doctors/hospital                                |    GET    | Retrieve all doctors of a specific hospital                              |                 id, page, limit                  | N/A  |        General         |
+| `🥶 PATIENT'S PROFILE`                                 |           |                                                                          |                                                  |      |                        |
+| api/v1/patient/profile                                 |    GET    | Retrieve specific patient profile                                        |                       N/A                        | Yes  |        Patient         |
+| api/v1/patient/profile                                 |    PUT    | Update specific patient profile                                          |                     payload                      | Yes  |        Patient         |
+| api/v1/patient/profile/password                        |    PUT    | Update specific patient profile password                                 |                     payload                      | Yes  |        Patient         |
+| `❤️‍🩹 PATIENT'S APPOINTMENTS`                            |           |                                                                          |                                                  |      |                        |
+| api/v1/patient/appointments/info                       |    GET    | Retrieve specific patient's appointments                                 |                  q, page, limit                  | Yes  |        Patient         |
+| api/v1/patient/appointments/new                        |    GET    | Create a new appointment for the logged-in patient                       |                     payload                      | Yes  |        Patient         |
+| api/v1/patient/appointments/{id}/info                  |    GET    | Retrieve specific appointment information                                |                        id                        | Yes  |        Patient         |
+| api/v1/patient/appointments/{id}/info                  |    PUT    | Update specific appointment information by id                            |                   id, payload                    | Yes  |        Patient         |
+| api/v1/patient/appointments/upcoming                   |    GET    | Retrieve all the upcoming appointments of the patient                    |                       N/A                        | Yes  |        Patient         |
+| `❤️‍🩹 PATIENT'S HEALTH RECORDS`                          |           |                                                                          |                                                  |      |                        |
+| api/v1/patient/health/records                          |    GET    | Retrieve logged-in patient's health records                              |                       N/A                        | Yes  |        Patient         |
+| api/v1/patient/health/records                          |    PUT    | Update specific patient's health records                                 |                        id                        | Yes  |        Patient         |
+| api/v1/patient/health/records/new                      |   POST    | Create new health record for the logged-in patient                       |                     payload                      | Yes  |        Patient         |
+| ws://{port}/api/v1/ws/monitoring/{user_id}             | Websocket | Socket connection to retrieve electronic health record (EHR) in realtime |                       N/A                        | N/A  |    Patient, Doctor     |
+| `🧘🏼 Patient's Medications`                             |           |                                                                          |                                                  |      |                        |
+| api/v1/patient/medication/suggestions                  |    GET    | Retrieve patient's medication history                                    |                       N/A                        | Yes  |        Patient         |
+| api/v1/patient/medication/suggestions                  |    PUT    | Update patient's medication history                                      |                   id, payload                    | Yes  |        Patient         |
+| api/v1/patient/medication/generate                     |   POST    | Manually generate Suggestion for patient                                 |                     payload                      | Yes  |        Patient         |
+| api/v1/patient/medication/appointment                  |    GET    | Retrieve medication history of a appointment by id                       |                        id                        | Yes  |        Patient         |
+| api/v1/patient/medication/appointment                  |  DELETE   | Delete medication history of a appointment by id                         |                        id                        | Yes  |        Patient         |
+| `👨🏼‍💻 Chat System`                                       |           |                                                                          |                                                  |      |                        |
+| api/v1/chats/user/{user_id}                            |    GET    | Retrieve User Help Chats                                                 |                 id, page, limit                  | Yes  |        Patient         |
+| api/v1/chats/{user_id}/{receiver_id}                   |    GET    | Communication b/w doctor and patient                                     |       sender_id, receiver_id, page, limit        | Yes  |    Patient, Doctor     |
+| ws://{port}/api/v1/ws/admin/help                       | Websocket | Socket connection to chat in realtime                                    |                       N/A                        | Yes  |        Patient         |
+| ws://{port}/api/v1/ws/chats/${user_id}                 | Websocket | Socket connection between two ports in realtime                          |                       N/A                        | Yes  | Patient, Doctor, Admin |
+| `🦹🏼 Doctors's Portal (Partially Complete)`             |           |                                                                          |                                                  |      |                        |
+| api/v1/users/doctor/info                               |    GET    | Retrieve doctors's information                                           |                       N/A                        | Yes  |         Doctor         |
+| api/v1/users/doctor/{doctor_id}/patients               |    GET    | Retrieve all the patients of the doctor                                  |      doctor_id, q, age, gender, page, limit      | Yes  |         Doctor         |
+| api/v1/users/doctor/{doctor_id}/analytics              |    GET    | Retrieve analytics of the doctor                                         |                 doctor_id, type                  | Yes  |         Doctor         |
+| api/v1/users/doctor/appointments                       |    GET    | Retrieve all the consultations/appointments doctor                       |     doctor_id, date, status, q, page, limit      | Yes  |         Doctor         |
+| api/v1/users/doctor/appointments/info/{id}             |    GET    | Retrieve a specific consultation/appointment information                 |                  appointment_id                  | Yes  |         Doctor         |
+| api/v1/users/doctor/appointments/info/{id}             |    PUT    | Update a specific consultation/appointment information                   |             appointment_id, payload              | Yes  |         Doctor         |
+| api/v1/users/doctor/appointments/requested             |    GET    | Get the appointment/consultation requests id                             |                       N/A                        | Yes  |         Doctor         |
+| api/v1/users/doctor/appointments/today                 |    GET    | Get the appointment/consultation that is on today                        |                    doctor_id                     | Yes  |         Doctor         |
+| api/v1/users/doctor/appointments/patient/{patient_id}  |    GET    | Retrieve previous appointment history of a patient                       |                    patient_id                    | Yes  |         Doctor         |
+| ws://{port}/api/v1/ws/appointment/requests/{doctor_id} | Websocket | Get realtime requests for of consultations from patients                 |                    doctor_id                     | N/A  |         Doctor         |
 
 <br>
 
